@@ -1,0 +1,10 @@
+.vscode
+dist/**
+build/**
+public/**
+coverage/**
+node_modules/**
+git/**
+config.js
+webpack.config.js
+webpack.config.production.js
