@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import {
@@ -20,13 +20,8 @@ const Movies = () => {
   const dispatch = useDispatch();
   const movies = useSelector((state) => state.movieReducer.data);
   const isLoading = useSelector((state) => state.movieReducer.isLoading);
-  const val = { open: false };
-  const show = () => {
-    val.setState({ open: true });
-  };
-  const handleCancel = () => {
-    val.setState({ open: false });
-  };
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState();
   useEffect(() => {
     dispatch(getAllMovies());
   }, [dispatch]);
@@ -77,26 +72,15 @@ const Movies = () => {
 
                       <Button
                         color="red"
-                        onClick={() => show()}
+                        onClick={() => {
+                          setSelectedId(index);
+                          setOpen(true);
+                        }}
 
                         // eslint-disable-next-line react/jsx-curly-newline
                       >
                         Delete
                       </Button>
-                      <Confirm
-                        open={val.open}
-                        content="Are you sure?"
-                        onCancel={() => handleCancel()}
-                        onConfirm={
-                          () =>
-                            dispatch(
-                              deleteMovie(index, () => {
-                                dispatch(getAllMovies());
-                              })
-                            )
-                          // eslint-disable-next-line react/jsx-curly-newline
-                        }
-                      />
                     </Button.Group>
                   </Table.Cell>
                 </Table.Row>
@@ -105,6 +89,21 @@ const Movies = () => {
           </Table>
         )}
       </Segment>
+      <Confirm
+        open={open}
+        content="Are you sure?"
+        onCancel={() => setOpen(false)}
+        onConfirm={
+          () =>
+            dispatch(
+              deleteMovie(selectedId, () => {
+                setOpen(false);
+                dispatch(getAllMovies());
+              })
+            )
+          // eslint-disable-next-line react/jsx-curly-newline
+        }
+      />
     </div>
   );
 };
